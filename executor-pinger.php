@@ -50,6 +50,9 @@ function get_latency($host) {
 
 
 $icons = $argv[1] ?? 'circles';
+if ($icons == 'random') {
+  $icons = array_keys(ICON_SETS)[rand(0, count(ICON_SETS) - 1)];
+}
 if (!empty(ICON_SETS[$icons])) {
   $icons = ICON_SETS[$icons];
 }
