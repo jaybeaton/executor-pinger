@@ -49,6 +49,16 @@ function get_latency($host) {
 }
 
 $options = getopt('', ['icons::', 'speed::', 'host::', 'help::']);
+if (isset($options['help'])) {
+  print "Will show the current ping time for a given server along with an icon that corresponds to the time.\n\n"
+    . "Usage:\n"
+    . "php executor-pinger.php [--icons=ICONSET] [--speed=SPEED_VALUES] [--host=HOST]\n\n"
+    .  "Where:\n"
+    . "  ICONSET - One of circles, squares, fruit, or random. Or, can be a string of icons (including emojis). Default: circles\n"
+    . "  SPEED_VALUES - Comma-separated list of speed values to go with icons. Number of items must be one fewer than the number of icons. Default: 1000,120,60,30\n"
+    . "  HOST - IP address to ping. Default: 8.8.8.8\n";
+  exit(0);
+}
 
 $icons = $options['icons'] ?? 'circles';
 if ($icons == 'random') {
