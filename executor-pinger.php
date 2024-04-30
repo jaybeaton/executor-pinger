@@ -48,8 +48,9 @@ function get_latency($host) {
   return trim($latency);
 }
 
+$options = getopt('', ['icons::', 'speed::', 'host::', 'help::']);
 
-$icons = $argv[1] ?? 'circles';
+$icons = $options['icons'] ?? 'circles';
 if ($icons == 'random') {
   $icons = array_keys(ICON_SETS)[rand(0, count(ICON_SETS) - 1)];
 }
@@ -57,7 +58,7 @@ if (!empty(ICON_SETS[$icons])) {
   $icons = ICON_SETS[$icons];
 }
 $icons = array_filter(mb_str_split($icons));
-$speed_values = $argv[2] ?? DEFAULT_SPEED_VALUES;
+$speed_values = $options['speed'] ?? DEFAULT_SPEED_VALUES;
 $speed_values = array_filter(explode(',', $speed_values));
 $speed_values[] = 0;
 
@@ -66,6 +67,6 @@ if (count($icons) != count($speed_values)) {
 }
 
 $display_map = array_combine($speed_values, $icons);
-$host = $argv[3] ?? DEFAULT_HOST;
+$host = $options['host'] ?? DEFAULT_HOST;
 
 print format_ping_time(get_latency($host), $display_map);
