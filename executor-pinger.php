@@ -3,42 +3,15 @@
 /**
  * See https://getemoji.com/
  */
-//const RED = "🔴";
-//const YELLOW = "🟡";
-//const ORANGE = "🟠";
-//const PURPLE = "🟣";
-//const BLUE = "🔵";
-//const GREEN = "🟢";
-const RED = "🟥";
-const YELLOW = "🟨";
-const PURPLE = "🟪";
-const BLUE = "🟦";
-const GREEN = "🟩";
-
-const RED_FLAG = "🚩";
-const TOMATO = "🍅";
-const LEMON = "🍋";
-const GRAPES = "🍇";
-const BLUEBERRIES = "🫐";
-const KIWI = "🥝";
-const APPLE = "🍏";
-
-//const SPEED_COLORS = [
-//  1000 => RED,
-//  120 => YELLOW,
-//  60 => PURPLE,
-//  30 => BLUE,
-//  0 => GREEN,
-//];
-const SPEED_COLORS = [
-  1000 => TOMATO,
-  120 => LEMON,
-  60 => GRAPES,
-  30 => BLUEBERRIES,
-  0 => APPLE,
+const ICON_SETS = [
+  'circles' => '🔴🟡🟣🔵🟢',
+  'squares' => '🟥🟨🟪🟦🟩',
+  'fruit' => '🍅🍋🍇🫐🍏',
 ];
 
-$host = '8.8.8.8';
+const DEFAULT_SPEED_VALUES = '1000,120,60,30';
+
+const DEFAULT_HOST = '8.8.8.8';
 
 /**
  * Format latency time.
@@ -49,13 +22,13 @@ $host = '8.8.8.8';
  * @return string
  *   Formatted latency.
  */
-function format_ping_time($time) {
+function format_ping_time($time, $display_map) {
   $color = '';
   if (!$time = round(floatval($time))) {
     $time = '❌';
   }
   else {
-    foreach (SPEED_COLORS as $min => $color) {
+    foreach ($display_map as $min => $color) {
       if ($time >= $min) {
         break;
       }
@@ -75,4 +48,21 @@ function get_latency($host) {
   return trim($latency);
 }
 
-print format_ping_time(get_latency($host));
+
+$icons = $argv[1] ?? 'circles';
+if (!empty(ICON_SETS[$icons])) {
+  $icons = ICON_SETS[$icons];
+}
+$icons = array_filter(mb_str_split($icons));
+$speed_values = $argv[2] ?? DEFAULT_SPEED_VALUES;
+$speed_values = array_filter(explode(',', $speed_values));
+$speed_values[] = 0;
+
+if (count($icons) != count($speed_values)) {
+  exit("The icon set must have one more item than the speed values.\n");
+}
+
+$display_map = array_combine($speed_values, $icons);
+$host = $argv[3] ?? DEFAULT_HOST;
+
+print format_ping_time(get_latency($host), $display_map);
